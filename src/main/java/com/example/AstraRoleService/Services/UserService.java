@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.example.AstraRoleService.Models.User;
 import com.example.AstraRoleService.Repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -23,6 +25,7 @@ public class UserService {
         return userRepository.findByRoleId(roleId);
     }
 
+    @Transactional
     public void saveUser(User user){
         userRepository.save(user);
     }

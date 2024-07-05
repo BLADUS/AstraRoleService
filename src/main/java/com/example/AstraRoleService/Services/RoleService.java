@@ -8,6 +8,8 @@ import com.example.AstraRoleService.Models.Role;
 import com.example.AstraRoleService.Repositories.RoleRepository;
 import com.example.AstraRoleService.Repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class RoleService {
     private final RoleRepository roleRepository;
@@ -26,6 +28,7 @@ public class RoleService {
         roleRepository.save(newRole);
     }
 
+    @Transactional
     public void deleteRole(Integer roleId) {
         if (roleId.equals(1) || roleId.equals(2)) {
             throw new IllegalArgumentException("Данную роль удалить нельзя");
