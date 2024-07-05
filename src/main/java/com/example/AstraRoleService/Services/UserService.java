@@ -28,7 +28,7 @@ public class UserService {
     }
 
     public void updateUserRole(Integer userId, Integer roleId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
         user.setRoleId(roleId);
         userRepository.save(user);
     }
