@@ -18,4 +18,12 @@ public class RoleService {
     public List<Role> getAllRoles(){
         return roleRepository.findAll();
     }
+
+    public void createRole(Role newRole){
+        roleRepository.save(newRole);
+    }
+
+    public void deleteRole(Integer roleId){
+        roleRepository.findById(roleId).ifPresent(roleRepository::delete);
+    }
 }
