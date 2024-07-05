@@ -6,24 +6,32 @@ import org.springframework.stereotype.Service;
 
 import com.example.AstraRoleService.Models.Role;
 import com.example.AstraRoleService.Repositories.RoleRepository;
+import com.example.AstraRoleService.Repositories.UserRepository;
 
 @Service
 public class RoleService {
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
-    public RoleService(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository, UserRepository userRepository) {
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<Role> getAllRoles(){
+    public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
 
-    public void createRole(Role newRole){
+    public void createRole(Role newRole) {
         roleRepository.save(newRole);
     }
 
-    public void deleteRole(Integer roleId){
+    public void deleteRole(Integer roleId) {
+        if (roleId.equals(1) || roleId.equals(2)) {
+            throw new IllegalArgumentException("Данную роль удалить нельзя");
+        }
+
+        userRepository.updateUserRolesToDefault(roleId);
         roleRepository.findById(roleId).ifPresent(roleRepository::delete);
     }
 }

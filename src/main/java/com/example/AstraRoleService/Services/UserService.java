@@ -27,9 +27,4 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateUserRole(Integer userId, Integer roleId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
-        user.setRoleId(roleId);
-        userRepository.save(user);
-    }
 }
