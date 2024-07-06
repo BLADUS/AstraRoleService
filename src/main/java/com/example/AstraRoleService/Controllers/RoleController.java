@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +35,7 @@ public class RoleController {
 
     @PostMapping
     public void createRole(@RequestBody Role newRole) {
-        roleService.createRole(newRole);
+        roleService.saveRole(newRole);
     }
 
     @DeleteMapping("/{id}")
@@ -45,6 +46,11 @@ public class RoleController {
     @GetMapping("/affected-users/{roleId}")
     public List<User> getAffectedUsers(@PathVariable("roleId") Integer roleId) {
         return userService.getAllUsersByRoleId(roleId);
+    }
+
+    @PatchMapping
+    public void updateRole(@RequestBody Role changedRole){
+        roleService.saveRole(changedRole);
     }
 
 }
