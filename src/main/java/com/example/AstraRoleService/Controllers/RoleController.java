@@ -2,6 +2,8 @@ package com.example.AstraRoleService.Controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,6 +17,8 @@ import com.example.AstraRoleService.Models.Role;
 import com.example.AstraRoleService.Models.User;
 import com.example.AstraRoleService.Services.RoleService;
 import com.example.AstraRoleService.Services.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/roles")
@@ -34,13 +38,25 @@ public class RoleController {
     }
 
     @PostMapping
-    public void createRole(@RequestBody Role newRole) {
-        roleService.saveRole(newRole);
+    public ResponseEntity<String> createRole(@RequestBody Role newRole, HttpServletRequest request) {
+        Role sessionRole = (Role) request.getSession().getAttribute("sessionRole");
+        if (sessionRole.getCreate_roles()) {
+            roleService.saveRole(newRole);
+            return ResponseEntity.ok("Role created successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to create roles");
+        }
     }
 
     @DeleteMapping("/{id}")
-    public void deleteRole(@PathVariable("id") Integer roleId) {
-        roleService.deleteRole(roleId);
+    public ResponseEntity<String> deleteRole(@PathVariable("id") Integer roleId, HttpServletRequest request) {
+        Role sessionRole = (Role) request.getSession().getAttribute("sessionRole");
+        if (sessionRole.getDelete_roles()) {
+            roleService.deleteRole(roleId);
+            return ResponseEntity.ok("Role deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to delete roles");
+        }
     }
 
     @GetMapping("/affected-users/{roleId}")
@@ -49,8 +65,32 @@ public class RoleController {
     }
 
     @PatchMapping
-    public void updateRole(@RequestBody Role changedRole){
-        roleService.saveRole(changedRole);
+    public ResponseEntity<String> updateRole(@RequestBody Role changedRole, HttpServletRequest request) {
+        Role sessionRole = (Role) request.getSession().getAttribute("sessionRole");
+        if (sessionRole.getEdit_roles()) {
+            roleService.saveRole(changedRole);
+            return ResponseEntity.ok("Role updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to edit roles");
+        }
     }
 
+    @PostMapping("/set-role/{roleId}")
+    public ResponseEntity<?> setSessionRole(@PathVariable("roleId") Integer roleId, HttpServletRequest request) {
+        Role role = roleService.getRoleById(roleId);
+        if (role == null) {
+            return ResponseEntity.notFound().build();
+        }
+        request.getSession().setAttribute("sessionRole", role);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/session-role")
+    public ResponseEntity<Role> getSessionRole(HttpServletRequest request) {
+        Role sessionRole = (Role) request.getSession().getAttribute("sessionRole");
+        if (sessionRole == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(sessionRole);
+    }
 }

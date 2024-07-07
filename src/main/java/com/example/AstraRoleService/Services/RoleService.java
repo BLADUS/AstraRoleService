@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.AstraRoleService.Exctptions.NotFoundException;
 import com.example.AstraRoleService.Models.Role;
 import com.example.AstraRoleService.Repositories.RoleRepository;
 import com.example.AstraRoleService.Repositories.UserRepository;
@@ -23,6 +24,12 @@ public class RoleService {
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
     }
+
+    public Role getRoleById(Integer roleId) {
+        return roleRepository.findById(roleId)
+                .orElseThrow(() -> new NotFoundException("Роль с roleId:" + roleId + "не найдена."));
+    }
+    
 
     public void saveRole(Role newRole) {
         roleRepository.save(newRole);
