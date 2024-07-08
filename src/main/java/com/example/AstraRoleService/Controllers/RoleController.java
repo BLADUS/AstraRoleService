@@ -33,8 +33,18 @@ public class RoleController {
     }
 
     @GetMapping
-    public List<Role> getAllRoles() {
-        return roleService.getAllRoles();
+    public ResponseEntity<?> getAllRoles() {
+        try {
+            List<Role> listRole = roleService.getAllRoles();
+            if (listRole.isEmpty()) {
+                return new ResponseEntity<>("Role list is empty", HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(listRole, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred while retrieving the list of roles",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping
@@ -60,8 +70,18 @@ public class RoleController {
     }
 
     @GetMapping("/affected-users/{roleId}")
-    public List<User> getAffectedUsers(@PathVariable("roleId") Integer roleId) {
-        return userService.getAllUsersByRoleId(roleId);
+    public ResponseEntity<?> getAffectedUsers(@PathVariable("roleId") Integer roleId) {
+        try {
+            List<User> userListByRole = userService.getAllUsersByRoleId(roleId);
+            if (userListByRole.isEmpty()) {
+                return new ResponseEntity<>("No users with this role were found", HttpStatus.NO_CONTENT);
+            } else {
+                return new ResponseEntity<>(userListByRole, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred while retrieving the list of users with this role",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PatchMapping
