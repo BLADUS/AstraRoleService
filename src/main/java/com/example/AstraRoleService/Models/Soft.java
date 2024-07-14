@@ -11,19 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "softs")
+public class Soft {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Integer userId;
-    @Column(name = "username")
-    private String username;
-    @Column(name = "role_id")
-    private Integer roleId;
-    @Column(name = "weight")
-    private Float weight;
+    @Column(name = "soft_id")
+    private Integer softId;
+
+    @Column(name = "softname")
+    private String softName;
 }
