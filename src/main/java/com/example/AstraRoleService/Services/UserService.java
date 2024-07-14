@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.AstraRoleService.Exctptions.NotFoundException;
 import com.example.AstraRoleService.Models.User;
 import com.example.AstraRoleService.Repositories.UserRepository;
 
@@ -26,8 +27,12 @@ public class UserService {
     }
 
     @Transactional
-    public void saveUser(User user){
+    public void saveUser(User user) {
         userRepository.save(user);
     }
 
+    public User getUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Роль с userId:" + userId + "не найдена."));
+    }
 }

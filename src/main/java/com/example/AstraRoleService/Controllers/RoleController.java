@@ -19,11 +19,11 @@ import com.example.AstraRoleService.Services.RoleService;
 import com.example.AstraRoleService.Services.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/roles")
 public class RoleController {
-
     private final RoleService roleService;
     private final UserService userService;
 
@@ -95,16 +95,6 @@ public class RoleController {
         }
     }
 
-    @PostMapping("/set-role/{roleId}")
-    public ResponseEntity<?> setSessionRole(@PathVariable("roleId") Integer roleId, HttpServletRequest request) {
-        Role role = roleService.getRoleById(roleId);
-        if (role == null) {
-            return ResponseEntity.notFound().build();
-        }
-        request.getSession().setAttribute("sessionRole", role);
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/session-role")
     public ResponseEntity<Role> getSessionRole(HttpServletRequest request) {
         Role sessionRole = (Role) request.getSession().getAttribute("sessionRole");
@@ -113,4 +103,20 @@ public class RoleController {
         }
         return ResponseEntity.ok(sessionRole);
     }
+
+    @PatchMapping("/set-role/{roleId}")
+    public ResponseEntity<?> setSessionRole(@PathVariable("roleId") Integer roleId, HttpServletRequest request) {
+        Role role = roleService.getRoleById(roleId);
+        if (role == null) {
+            return ResponseEntity.notFound().build();
+        }
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("sessionUser");
+        user.setRoleId(roleId);
+        userService.saveUser(user);
+        session.setAttribute("sessionUser", user);
+        session.setAttribute("sessionRole", role);
+        return ResponseEntity.ok().build();
+    }
+
 }
