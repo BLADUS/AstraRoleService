@@ -9,11 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.AstraRoleService.Models.Distrib;
+import com.example.AstraRoleService.Models.Error;
 import com.example.AstraRoleService.Models.Soft;
+import com.example.AstraRoleService.Models.User;
 import com.example.AstraRoleService.Services.DistribService;
 import com.example.AstraRoleService.Services.ErrorService;
 import com.example.AstraRoleService.Services.SoftService;
-import com.example.AstraRoleService.Models.Error;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/resources")
@@ -41,9 +45,13 @@ public class ResourceController {
     }
 
     @GetMapping("/distribs")
-    public ResponseEntity<?> getAllDistribs() {
+    public ResponseEntity<?> getAllDistribs(HttpServletRequest request) {
         try {
-            List<Distrib> distribs = distribService.getAllDistribs();
+            Integer sessionUserId = getSessionUserId(request);
+            if (sessionUserId == -1) {
+                return ResponseEntity.noContent().build();
+            }
+            List<Distrib> distribs = distribService.getDistribsForCurrentUser(sessionUserId);
             return createResponse(distribs);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -52,9 +60,13 @@ public class ResourceController {
     }
 
     @GetMapping("/softs")
-    public ResponseEntity<?> getAllSofts() {
+    public ResponseEntity<?> getAllSofts(HttpServletRequest request) {
         try {
-            List<Soft> softs = softService.getAllSofts();
+            Integer sessionUserId = getSessionUserId(request);
+            if (sessionUserId == -1) {
+                return ResponseEntity.noContent().build();
+            }
+            List<Soft> softs = softService.getSoftsForCurrentUser(sessionUserId);
             return createResponse(softs);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -68,5 +80,14 @@ public class ResourceController {
         } else {
             return ResponseEntity.ok(data);
         }
+    }
+
+    private Integer getSessionUserId(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return -1;
+        }
+        return sessionUser.getUserId();
     }
 }

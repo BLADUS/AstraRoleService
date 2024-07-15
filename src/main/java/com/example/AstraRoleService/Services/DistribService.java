@@ -15,7 +15,7 @@ public class DistribService {
         this.distribRepository = distribRepository;
     }
 
-    public List<Distrib> getAllDistribs(){
-        return distribRepository.findAll();
+    public List<Distrib> getDistribsForCurrentUser(Integer userId){
+        return distribRepository.findDistribsByUserId(userId);
     }
 }

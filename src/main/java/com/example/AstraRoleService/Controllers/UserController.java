@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.AstraRoleService.DTO.UserDTO;
 import com.example.AstraRoleService.Models.User;
 import com.example.AstraRoleService.Services.RoleService;
 import com.example.AstraRoleService.Services.UserService;
@@ -56,12 +57,13 @@ public class UserController {
     }
 
     @GetMapping("/session-user")
-    public ResponseEntity<User> getSessionUser(HttpServletRequest request) {
+    public ResponseEntity<UserDTO> getSessionUser(HttpServletRequest request) {
         User sessionUser = (User) request.getSession().getAttribute("sessionUser");
         if (sessionUser == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(sessionUser);
+        UserDTO userDTO = new UserDTO(sessionUser);
+        return ResponseEntity.ok(userDTO);
     }
 
 

@@ -15,7 +15,7 @@ public class SoftService {
         this.softRepository = softRepository;
     }
 
-    public List<Soft> getAllSofts() {
-        return softRepository.findAll();
+    public List<Soft> getSoftsForCurrentUser(Integer userId) {
+        return softRepository.findSoftsByUserId(userId);
     }
 }
